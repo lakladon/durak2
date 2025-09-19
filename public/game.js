@@ -1,9 +1,11 @@
 class DurakClient {
     constructor() {
-        this.socket = io();
+        this.socket = null;
         this.gameState = null;
         this.selectedCard = null;
         this.playerName = '';
+        this.authToken = localStorage.getItem('durak-token') || '';
+        this.cachedStats = null;
         
         // Mobile-specific properties
         this.isMobile = this.detectMobile();
@@ -16,7 +18,9 @@ class DurakClient {
         
         this.initializeElements();
         this.setupEventListeners();
-        this.setupSocketListeners();
+        if (this.authToken) {
+            this.afterAuthSetup();
+        }
         this.initializeSoundSystem();
         this.initializeThemeSystem();
         this.initializeMobileFeatures();
@@ -30,7 +34,10 @@ class DurakClient {
         this.gameOverScreen = document.getElementById('gameOverScreen');
 
         // Login elements
-        this.playerNameInput = document.getElementById('playerName');
+        this.usernameInput = document.getElementById('username');
+        this.passwordInput = document.getElementById('password');
+        this.registerBtn = document.getElementById('registerBtn');
+        this.loginBtn = document.getElementById('loginBtn');
         this.joinGameBtn = document.getElementById('joinGameBtn');
         
         // Statistics elements
@@ -79,11 +86,105 @@ class DurakClient {
         this.tableCardPairTemplate = document.getElementById('tableCardPairTemplate');
     }
 
+    afterAuthSetup() {
+        try {
+            this.socket = io({
+                auth: { token: this.authToken }
+            });
+            this.setupSocketListeners();
+            this.fetchMeAndStats();
+            const joinBtn = this.joinGameBtn;
+            if (joinBtn) joinBtn.style.display = 'block';
+        } catch (e) {
+            console.error('Socket initialization failed', e);
+        }
+    }
+
+    async handleRegister() {
+        const username = (this.usernameInput.value || '').trim();
+        const password = (this.passwordInput.value || '').trim();
+        if (username.length < 2) {
+            alert('Имя пользователя должно содержать минимум 2 символа');
+            return;
+        }
+        if (password.length < 6) {
+            alert('Пароль должен содержать минимум 6 символов');
+            return;
+        }
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.error || 'REGISTRATION_FAILED');
+            }
+            const data = await res.json();
+            this.handleAuthSuccess(data);
+        } catch (e) {
+            alert('Ошибка регистрации: ' + e.message);
+        }
+    }
+
+    async handleLogin() {
+        const username = (this.usernameInput.value || '').trim();
+        const password = (this.passwordInput.value || '').trim();
+        if (!username || !password) {
+            alert('Введите имя пользователя и пароль');
+            return;
+        }
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.error || 'LOGIN_FAILED');
+            }
+            const data = await res.json();
+            this.handleAuthSuccess(data);
+        } catch (e) {
+            alert('Ошибка входа: ' + e.message);
+        }
+    }
+
+    handleAuthSuccess(data) {
+        this.authToken = data.token;
+        this.playerName = data.user?.username || '';
+        localStorage.setItem('durak-token', this.authToken);
+        this.afterAuthSetup();
+        this.showNotification('Вход выполнен');
+    }
+
+    async fetchMeAndStats() {
+        try {
+            const meRes = await fetch('/api/me', { headers: { Authorization: `Bearer ${this.authToken}` } });
+            if (meRes.ok) {
+                const me = await meRes.json();
+                this.playerName = me?.user?.username || this.playerName;
+            }
+            const statsRes = await fetch('/api/stats/me', { headers: { Authorization: `Bearer ${this.authToken}` } });
+            if (statsRes.ok) {
+                const s = await statsRes.json();
+                this.cachedStats = s?.stats || null;
+                this.updatePlayerStats(this.cachedStats);
+            }
+        } catch (e) {
+            console.warn('Failed to fetch profile or stats', e);
+        }
+    }
+
     setupEventListeners() {
-        // Login
+        // Auth & Join
+        this.registerBtn.addEventListener('click', () => this.handleRegister());
+        this.loginBtn.addEventListener('click', () => this.handleLogin());
         this.joinGameBtn.addEventListener('click', () => this.joinGame());
-        this.playerNameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.joinGame();
+        this.passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.handleLogin();
         });
 
         // Game actions
@@ -104,6 +205,7 @@ class DurakClient {
     }
 
     setupSocketListeners() {
+        if (!this.socket) return;
         this.socket.on('waitingForPlayer', () => {
             this.showScreen('waitingScreen');
         });
@@ -147,10 +249,13 @@ class DurakClient {
 
         this.socket.on('disconnect', () => {
             console.log('Disconnected from server');
-            this.gameStatusText.textContent = 'Соединение потеряно...';
+            if (this.gameStatusText) {
+                this.gameStatusText.textContent = 'Соединение потеряно...';
+            }
         });
 
         this.socket.on('playerStats', (stats) => {
+            this.cachedStats = stats;
             this.updatePlayerStats(stats);
         });
 
@@ -160,15 +265,12 @@ class DurakClient {
     }
 
     joinGame() {
-        const name = this.playerNameInput.value.trim();
-        if (name.length < 2) {
-            alert('Имя должно содержать минимум 2 символа');
+        if (!this.socket || !this.authToken) {
+            this.showNotification('Сначала войдите в аккаунт');
             return;
         }
-
-        this.playerName = name;
-        this.socket.emit('joinGame', name);
-        this.socket.emit('getPlayerStats', name);
+        this.socket.emit('joinGame', this.playerName);
+        this.socket.emit('getPlayerStats');
     }
 
     showScreen(screenId) {
@@ -1069,7 +1171,7 @@ class DurakClient {
     }
 
     getStatsContent() {
-        const stats = this.getPlayerStats();
+        const stats = this.getPlayerStatsLocal();
         return `
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
                 <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px;">
@@ -1125,13 +1227,8 @@ class DurakClient {
     }
 
     // Get Player Stats
-    getPlayerStats() {
-        return {
-            gamesPlayed: localStorage.getItem('gamesPlayed') || 0,
-            wins: localStorage.getItem('wins') || 0,
-            losses: localStorage.getItem('losses') || 0,
-            winRate: localStorage.getItem('winRate') || 0
-        };
+    getPlayerStatsLocal() {
+        return this.cachedStats || { gamesPlayed: 0, wins: 0, losses: 0, winRate: 0 };
     }
 }
 

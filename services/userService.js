@@ -1,20 +1,7 @@
-const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
-const { readJson, writeJson, ensureDirectoryExists } = require('../utils/fileDb');
-
-const DATA_DIR = path.join(__dirname, '..', 'data');
-const USERS_FILE = path.join(DATA_DIR, 'users.json');
-ensureDirectoryExists(DATA_DIR);
-
-function loadUsers() {
-	return readJson(USERS_FILE, []);
-}
-
-function saveUsers(users) {
-	writeJson(USERS_FILE, users);
-}
+const db = require('../utils/sqlite');
 
 async function registerUser(username, password) {
 	const normalizedUsername = String(username || '').trim().toLowerCase();
@@ -24,46 +11,40 @@ async function registerUser(username, password) {
 	if (!password || String(password).length < 6) {
 		throw new Error('PASSWORD_INVALID');
 	}
-	const users = loadUsers();
-	if (users.some(u => u.username === normalizedUsername)) {
+	const existing = db.prepare('SELECT id FROM users WHERE username = ?').get(normalizedUsername);
+	if (existing) {
 		throw new Error('USERNAME_TAKEN');
 	}
 	const passwordHash = await bcrypt.hash(password, 10);
-	const newUser = {
-		id: uuidv4(),
-		username: normalizedUsername,
-		passwordHash,
-		createdAt: new Date().toISOString()
-	};
-	users.push(newUser);
-	saveUsers(users);
-	return { id: newUser.id, username: newUser.username };
+	const id = uuidv4();
+	const createdAt = new Date().toISOString();
+	db.prepare('INSERT INTO users (id, username, password_hash, created_at) VALUES (?, ?, ?, ?)')
+		.run(id, normalizedUsername, passwordHash, createdAt);
+	return { id, username: normalizedUsername };
 }
 
 async function authenticateUser(username, password) {
 	const normalizedUsername = String(username || '').trim().toLowerCase();
-	const users = loadUsers();
-	const user = users.find(u => u.username === normalizedUsername);
-	if (!user) {
+	const row = db.prepare('SELECT id, username, password_hash FROM users WHERE username = ?').get(normalizedUsername);
+	if (!row) {
 		throw new Error('INVALID_CREDENTIALS');
 	}
-	const ok = await bcrypt.compare(password, user.passwordHash);
+	const ok = await bcrypt.compare(password, row.password_hash);
 	if (!ok) {
 		throw new Error('INVALID_CREDENTIALS');
 	}
-	return { id: user.id, username: user.username };
+	return { id: row.id, username: row.username };
 }
 
 function getUserById(userId) {
-	const users = loadUsers();
-	const user = users.find(u => u.id === userId);
-	return user ? { id: user.id, username: user.username } : null;
+	const row = db.prepare('SELECT id, username FROM users WHERE id = ?').get(userId);
+	return row ? { id: row.id, username: row.username } : null;
 }
 
 function getUserByUsername(username) {
-	const users = loadUsers();
-	const user = users.find(u => u.username === String(username || '').trim().toLowerCase());
-	return user ? { id: user.id, username: user.username } : null;
+	const normalizedUsername = String(username || '').trim().toLowerCase();
+	const row = db.prepare('SELECT id, username FROM users WHERE username = ?').get(normalizedUsername);
+	return row ? { id: row.id, username: row.username } : null;
 }
 
 function createToken(user) {

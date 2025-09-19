@@ -6,6 +6,7 @@ class DurakClient {
         this.playerName = '';
         this.authToken = localStorage.getItem('durak-token') || '';
         this.cachedStats = null;
+		this.guestMode = false;
         
         // Mobile-specific properties
         this.isMobile = this.detectMobile();
@@ -39,6 +40,7 @@ class DurakClient {
         this.registerBtn = document.getElementById('registerBtn');
         this.loginBtn = document.getElementById('loginBtn');
         this.joinGameBtn = document.getElementById('joinGameBtn');
+		this.guestBtn = document.getElementById('guestBtn');
         
         // Statistics elements
         this.playerStatsContainer = document.getElementById('playerStatsContainer');
@@ -99,6 +101,20 @@ class DurakClient {
             console.error('Socket initialization failed', e);
         }
     }
+
+	startAsGuest() {
+		this.guestMode = true;
+		const inputName = (this.usernameInput?.value || '').trim();
+		this.playerName = inputName || `Гость-${Math.floor(1000 + Math.random() * 9000)}`;
+		try {
+			this.socket = io();
+			this.setupSocketListeners();
+			if (this.joinGameBtn) this.joinGameBtn.style.display = 'block';
+			this.showNotification('Гостевой режим: подключено');
+		} catch (e) {
+			console.error('Socket (guest) initialization failed', e);
+		}
+	}
 
     async handleRegister() {
         const username = (this.usernameInput.value || '').trim();
@@ -183,6 +199,9 @@ class DurakClient {
         this.registerBtn.addEventListener('click', () => this.handleRegister());
         this.loginBtn.addEventListener('click', () => this.handleLogin());
         this.joinGameBtn.addEventListener('click', () => this.joinGame());
+		if (this.guestBtn) {
+			this.guestBtn.addEventListener('click', () => this.startAsGuest());
+		}
         this.passwordInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.handleLogin();
         });
@@ -264,14 +283,19 @@ class DurakClient {
         });
     }
 
-    joinGame() {
-        if (!this.socket || !this.authToken) {
-            this.showNotification('Сначала войдите в аккаунт');
-            return;
-        }
-        this.socket.emit('joinGame', this.playerName);
-        this.socket.emit('getPlayerStats');
-    }
+	joinGame() {
+		if (!this.socket) {
+			this.showNotification('Нет соединения с сервером');
+			return;
+		}
+		if (!this.playerName) {
+			this.playerName = `Игрок-${Math.floor(1000 + Math.random() * 9000)}`;
+		}
+		this.socket.emit('joinGame', this.playerName);
+		if (this.authToken) {
+			this.socket.emit('getPlayerStats');
+		}
+	}
 
     showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(screen => {

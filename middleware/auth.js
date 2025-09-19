@@ -17,7 +17,11 @@ function expressAuthMiddleware(req, res, next) {
 function socketIoAuthMiddleware(socket, next) {
 	try {
 		const token = socket.handshake.auth?.token || null;
-		if (!token) return next(new Error('UNAUTHORIZED'));
+		// Allow guests: if no token provided, proceed without attaching user
+		if (!token) {
+			socket.user = null;
+			return next();
+		}
 		const payload = verifyToken(token);
 		if (!payload) return next(new Error('INVALID_TOKEN'));
 		socket.user = { id: payload.sub, username: payload.username };

@@ -74,8 +74,13 @@
                 <h1>Дурак</h1>
                 <p>Многопользовательская карточная игра</p>
                 <div class="login-form">
-                    <input type="text" id="playerName" placeholder="Введите ваше имя" maxlength="20">
-                    <button id="joinGameBtn">Присоединиться к игре</button>
+                    <input type="text" id="username" placeholder="Имя пользователя" maxlength="20" autocomplete="username">
+                    <input type="password" id="password" placeholder="Пароль (мин. 6 символов)" maxlength="64" autocomplete="current-password">
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button id="registerBtn">Регистрация</button>
+                        <button id="loginBtn">Войти</button>
+                    </div>
+                    <button id="joinGameBtn" style="margin-top: 15px; display: none;">Присоединиться к игре</button>
                 </div>
                 <div class="player-stats" id="playerStatsContainer" style="display: none;">
                     <h3>Ваша статистика</h3>

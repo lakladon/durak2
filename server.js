@@ -2,18 +2,66 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const { registerUser, authenticateUser, createToken } = require('./services/userService');
+const { getPlayerStats, updatePlayerStats } = require('./services/statsService');
+const { expressAuthMiddleware, socketIoAuthMiddleware } = require('./middleware/auth');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Serve static files
+// Security & basic middlewares
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
+
+// Static files
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Rate limiting for auth endpoints
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
+
+// Auth routes
+app.post('/api/auth/register', authLimiter, async (req, res) => {
+    try {
+        const { username, password } = req.body || {};
+        const user = await registerUser(username, password);
+        const token = createToken(user);
+        res.json({ token, user });
+    } catch (e) {
+        const code = String(e.message || 'ERROR');
+        const status = code === 'USERNAME_TAKEN' || code === 'USERNAME_INVALID' || code === 'PASSWORD_INVALID' ? 400 : 500;
+        res.status(status).json({ error: code });
+    }
+});
+
+app.post('/api/auth/login', authLimiter, async (req, res) => {
+    try {
+        const { username, password } = req.body || {};
+        const user = await authenticateUser(username, password);
+        const token = createToken(user);
+        res.json({ token, user });
+    } catch (e) {
+        res.status(401).json({ error: 'INVALID_CREDENTIALS' });
+    }
+});
+
+// Protected routes
+app.get('/api/me', expressAuthMiddleware, (req, res) => {
+    res.json({ user: req.user });
+});
+
+app.get('/api/stats/me', expressAuthMiddleware, (req, res) => {
+    const stats = getPlayerStats(req.user.username);
+    res.json({ stats });
+});
 
 // Game state
 const games = new Map();
 const waitingPlayers = [];
-const playerStats = new Map(); // Store player statistics
 
 // Durak game class
 class DurakGame {
@@ -244,13 +292,17 @@ class DurakGame {
     }
 }
 
+// Require authenticated socket connections
+io.use(socketIoAuthMiddleware);
+
 // Socket.IO connection handling
 io.on('connection', (socket) => {
     console.log('Player connected:', socket.id);
 
     socket.on('joinGame', (playerName) => {
         // Add player to waiting list
-        waitingPlayers.push({ id: socket.id, name: playerName, socket: socket });
+        const effectiveName = (socket.user && socket.user.username) || String(playerName || '').trim() || 'Игрок';
+        waitingPlayers.push({ id: socket.id, name: effectiveName, socket: socket });
 
         // If we have 2 players, start a game
         if (waitingPlayers.length >= 2) {
@@ -351,9 +403,10 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Get player statistics
-    socket.on('getPlayerStats', (playerName) => {
-        const stats = getPlayerStats(playerName);
+    // Get player statistics (for authenticated user)
+    socket.on('getPlayerStats', () => {
+        const username = socket.user?.username;
+        const stats = username ? getPlayerStats(username) : null;
         socket.emit('playerStats', stats);
     });
 
@@ -441,30 +494,7 @@ function findGameByPlayerId(playerId) {
     return null;
 }
 
-// Player statistics functions
-function getPlayerStats(playerName) {
-    if (!playerStats.has(playerName)) {
-        playerStats.set(playerName, {
-            gamesPlayed: 0,
-            wins: 0,
-            losses: 0,
-            winRate: 0
-        });
-    }
-    return playerStats.get(playerName);
-}
-
-function updatePlayerStats(playerName, won) {
-    const stats = getPlayerStats(playerName);
-    stats.gamesPlayed++;
-    if (won) {
-        stats.wins++;
-    } else {
-        stats.losses++;
-    }
-    stats.winRate = stats.gamesPlayed > 0 ? (stats.wins / stats.gamesPlayed * 100).toFixed(1) : 0;
-    playerStats.set(playerName, stats);
-}
+// Statistics handled via services/statsService
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

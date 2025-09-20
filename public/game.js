@@ -538,8 +538,9 @@ class DurakClient {
         const isAttacker = this.gameState.currentAttacker === this.gameState.players.findIndex(p => p.id === this.socket.id);
         const isDefender = this.gameState.currentDefender === this.gameState.players.findIndex(p => p.id === this.socket.id);
         
-        // End turn button - available for attacker when there are cards on table
-        this.endTurnBtn.disabled = !(isAttacker && this.gameState.table.length > 0);
+		// End turn button - only when attacker and all attacks are defended
+		const allDefended = this.gameState.table.length > 0 && this.gameState.table.every(pair => pair.defense);
+		this.endTurnBtn.disabled = !(isAttacker && allDefended);
         
         // Take cards button - available for defender when there are undefended cards
         const hasUndefendedCards = this.gameState.table.some(pair => !pair.defense);

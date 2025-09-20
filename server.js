@@ -377,7 +377,21 @@ io.on('connection', (socket) => {
         const game = findGameByPlayerId(socket.id);
         if (!game) return;
 
-        game.endTurn();
+		// Guard: prevent attacker from ending turn while defender is still defending
+		const playerIndex = game.players.findIndex(p => p.id === socket.id);
+		const isAttacker = playerIndex === game.currentAttacker;
+		const isDefender = playerIndex === game.currentDefender;
+		const hasCardsOnTable = game.table.length > 0;
+		const hasUndefended = game.table.some(pair => !pair.defense);
+
+		// No cards on table -> nothing to end
+		if (!hasCardsOnTable) return;
+		// If there are undefended cards, only defender can end turn (take cards)
+		if (hasUndefended && !isDefender) return;
+		// If all attacks defended, only attacker can end turn (бито)
+		if (!hasUndefended && !isAttacker) return;
+
+		game.endTurn();
 
         // Send updated game state to all players
         game.players.forEach(player => {

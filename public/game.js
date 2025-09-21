@@ -263,17 +263,26 @@ class DurakClient {
 
     setupEventListeners() {
         // Auth & Join
-        this.registerBtn.addEventListener('click', () => this.handleRegister());
-        this.loginBtn.addEventListener('click', () => this.handleLogin());
-        this.joinGameBtn.addEventListener('click', () => this.joinGame());
+        if (this.registerBtn) {
+            this.registerBtn.addEventListener('click', () => this.handleRegister());
+        }
+        if (this.loginBtn) {
+            this.loginBtn.addEventListener('click', () => this.handleLogin());
+        }
+        if (this.joinGameBtn) {
+            this.joinGameBtn.addEventListener('click', () => this.joinGame());
+        }
         
         // Guest mode
         if (this.guestPlayBtn) {
             this.guestPlayBtn.addEventListener('click', () => this.startAsGuest());
         }
-        this.passwordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.handleLogin();
-        });
+        
+        if (this.passwordInput) {
+            this.passwordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') this.handleLogin();
+            });
+        }
 
         // Game actions
         this.endTurnBtn.addEventListener('click', () => this.endTurn());

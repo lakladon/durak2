@@ -106,19 +106,19 @@ class DurakClient {
         }
     }
 
-	startAsGuest() {
-		this.guestMode = true;
-		const inputName = (this.usernameInput?.value || '').trim();
-		this.playerName = inputName || `Гость-${Math.floor(1000 + Math.random() * 9000)}`;
-		try {
-			this.socket = io();
-			this.setupSocketListeners();
-			if (this.joinGameBtn) this.joinGameBtn.style.display = 'block';
-			this.showNotification('Гостевой режим: подключено');
-		} catch (e) {
-			console.error('Socket (guest) initialization failed', e);
-		}
-	}
+    startAsGuest() {
+        this.guestMode = true;
+        const inputName = (this.guestUsernameInput?.value || '').trim();
+        this.playerName = inputName || `Гость-${Math.floor(1000 + Math.random() * 9000)}`;
+        try {
+            this.socket = io();
+            this.setupSocketListeners();
+            if (this.joinGameBtn) this.joinGameBtn.style.display = 'block';
+            this.showNotification('Гостевой режим: подключено');
+        } catch (e) {
+            console.error('Socket (guest) initialization failed', e);
+        }
+    }
 
     async handleRegister() {
         const username = (this.usernameInput.value || '').trim();

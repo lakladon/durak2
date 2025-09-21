@@ -1526,8 +1526,8 @@ p {
   
   /* Cards Mobile */
   .card {
-    width: 3rem;
-    height: 4.5rem;
+    width: 4rem;
+    height: 6rem;
   }
   
   .card-rank {
@@ -1540,8 +1540,8 @@ p {
   
   .attack-card-slot,
   .defense-card-slot {
-    width: 3rem;
-    height: 4.5rem;
+    width: 4rem;
+    height: 6rem;
   }
   
   /* Game Actions Mobile */

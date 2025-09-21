@@ -19,6 +19,7 @@ class DurakClient {
         
         this.initializeElements();
         this.setupEventListeners();
+        this.updateAuthUI(); // Обновляем UI в зависимости от статуса аутентификации
         if (this.authToken) {
             this.afterAuthSetup();
         }

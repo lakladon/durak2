@@ -1,266 +1,260 @@
 
+/* ========================================
+   MODERN MINIMALIST DURAK GAME STYLES
+   ======================================== */
+
+/* CSS Variables */
+:root {
+  /* Primary Colors - Green Theme */
+  --primary-green: #2d5a3d;
+  --primary-green-light: #4a7c59;
+  --primary-green-dark: #1e3d29;
+  --accent-green: #5cb85c;
+  --accent-green-light: #7bc97b;
+  
+  /* Secondary Colors */
+  --gold: #f4c430;
+  --gold-light: #f7d65a;
+  --gold-dark: #d4a017;
+  
+  /* Neutral Colors */
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  
+  /* Game Colors */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+  
+  /* Typography */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+}
+
+/* Dark Theme Variables */
+.dark-theme {
+  --primary-green: #34d399;
+  --primary-green-light: #6ee7b7;
+  --primary-green-dark: #10b981;
+  --accent-green: #22c55e;
+  --accent-green-light: #4ade80;
+  
+  --white: var(--gray-900);
+  --gray-50: var(--gray-800);
+  --gray-100: var(--gray-700);
+  --gray-200: var(--gray-600);
+  --gray-300: var(--gray-500);
+  --gray-800: var(--gray-200);
+  --gray-900: var(--gray-100);
+}
+
+/* ========================================
+   RESET & BASE STYLES
+   ======================================== */
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: linear-gradient(135deg, #0f4c3a, #2d8659);
-    color: white;
-    height: 100vh;
-    overflow: hidden;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  font-family: var(--font-family);
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
+  color: var(--white);
+  min-height: 100vh;
+  overflow: hidden;
+  line-height: 1.6;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 #app {
-    height: 100vh;
-    position: relative;
+  min-height: 100vh;
+  position: relative;
 }
 
-/* Screen Management */
-.screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
-    align-items: center;
-    justify-content: center;
+/* ========================================
+   TYPOGRAPHY
+   ======================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  margin: 0;
 }
 
-.screen.active {
-    display: flex;
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1.125rem; }
+
+p {
+  margin: 0;
+  line-height: 1.6;
 }
 
-/* Login Screen */
-.login-container {
-    text-align: center;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 40px;
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-6);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
 }
 
-.login-container h1 {
-    font-size: 3em;
-    margin-bottom: 10px;
-    color: #ffd700;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+.btn:focus {
+  outline: 2px solid var(--primary-green-light);
+  outline-offset: 2px;
 }
 
-.login-container p {
-    font-size: 1.2em;
-    margin-bottom: 30px;
-    opacity: 0.9;
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
-.login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
+/* Primary Button */
+.btn-primary {
+  background: var(--gold);
+  color: var(--primary-green-dark);
+  box-shadow: var(--shadow-md);
 }
 
-#playerName {
-    padding: 15px;
-    font-size: 1.1em;
-    border: none;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.9);
-    color: #333;
-    width: 300px;
-    text-align: center;
+.btn-primary:hover:not(:disabled) {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
-#joinGameBtn {
-    padding: 15px 30px;
-    font-size: 1.1em;
-    background: #ffd700;
-    color: #333;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: bold;
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
 }
 
-#joinGameBtn:hover {
-    background: #ffed4e;
-    transform: translateY(-2px);
+/* Secondary Button */
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  border: 2px solid var(--gold);
+  backdrop-filter: blur(10px);
 }
 
-/* Waiting Screen */
-.waiting-container {
-    text-align: center;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 40px;
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
 }
 
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid rgba(255, 255, 255, 0.3);
-    border-top: 5px solid #ffd700;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 20px auto;
+/* Success Button */
+.btn-success {
+  background: var(--success);
+  color: var(--white);
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.btn-success:hover:not(:disabled) {
+  background: #16a34a;
+  transform: translateY(-2px);
 }
 
-/* Game Screen */
-#gameScreen {
-    flex-direction: column;
-    padding: 20px;
-    gap: 20px;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+/* Small Button */
+.btn-sm {
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.875rem;
 }
 
-.game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 15px 25px;
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
+/* Large Button */
+.btn-lg {
+  padding: var(--space-4) var(--space-8);
+  font-size: 1.125rem;
 }
 
-.player-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
+/* ========================================
+   CARDS
+   ======================================== */
 
-.player-name {
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-.hand-count {
-    font-size: 0.9em;
-    opacity: 0.8;
-}
-
-.game-info {
-    display: flex;
-    gap: 30px;
-    align-items: center;
-}
-
-.trump-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.1em;
-    margin-left: 10px;
-}
-
-.trump-card {
-    width: 40px;
-    height: 60px;
-    background: white;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5em;
-    color: #333;
-    border: 2px solid #ffd700;
-}
-
-.deck-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
-
-.deck-count {
-    font-size: 1.1em;
-    font-weight: bold;
-}
-
-.deck-icon {
-    font-size: 2em;
-}
-
-/* Game Table */
-.game-table {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-    padding: 20px;
-    backdrop-filter: blur(5px);
-}
-
-.table-area {
-    flex: 1;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-    align-items: center;
-    min-height: clamp(200px, 40vh, 520px);
-    border: 2px dashed rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    padding: 20px;
-}
-
-.card-pair {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-}
-
-.attack-card-slot, .defense-card-slot {
-    width: 80px;
-    height: 120px;
-    position: relative;
-}
-
-.defense-card-slot {
-    border: 2px dashed rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
-}
-
-.defense-card-slot.has-card {
-    border: none;
-}
-
-/* Cards */
 .card {
-    width: 80px;
-    height: 120px;
-    background: white;
-    border-radius: 8px;
-    border: 2px solid #333;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    user-select: none;
+  width: 4rem;
+  height: 6rem;
+  background: var(--white);
+  border: 2px solid var(--gray-300);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  box-shadow: var(--shadow-md);
+  user-select: none;
     transform-origin: center;
     animation: cardAppear 0.5s ease-out;
     touch-action: manipulation;

@@ -178,6 +178,7 @@ class DurakClient {
         this.playerName = data.user?.username || '';
         localStorage.setItem('durak-token', this.authToken);
         this.afterAuthSetup();
+        this.updateAuthUI(); // Обновляем UI после успешной аутентификации
         this.showNotification('Вход выполнен');
     }
 

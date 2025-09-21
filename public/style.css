@@ -1606,14 +1606,14 @@ p {
   }
   
   .card {
-    width: 3.5rem;
-    height: 5.25rem;
+    width: 4.5rem;
+    height: 6.75rem;
   }
   
   .attack-card-slot,
   .defense-card-slot {
-    width: 3.5rem;
-    height: 5.25rem;
+    width: 4.5rem;
+    height: 6.75rem;
   }
   
   .chat-container {

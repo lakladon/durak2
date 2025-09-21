@@ -1693,14 +1693,14 @@ p {
   }
   
   .card {
-    width: 2.5rem;
-    height: 3.75rem;
+    width: 3.5rem;
+    height: 5.25rem;
   }
   
   .attack-card-slot,
   .defense-card-slot {
-    width: 2.5rem;
-    height: 3.75rem;
+    width: 3.5rem;
+    height: 5.25rem;
   }
   
   .chat-container {

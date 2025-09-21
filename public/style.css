@@ -548,8 +548,8 @@ p {
 }
 
 .trump-card {
-  width: 2.5rem;
-  height: 3.75rem;
+  width: 3rem;
+  height: 4.5rem;
   background: var(--white);
   border: 2px solid var(--gold);
   border-radius: var(--radius-md);

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Дурак</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-container {
+            width: clamp(320px, 90vw, 420px);
+            text-align: left;
+        }
+        
+        .auth-title {
+            font-size: 2em;
+            margin-bottom: 16px;
+            color: #ffd700;
+            text-align: center;
+        }
+        
+        .auth-subtitle {
+            font-size: 0.95em;
+            opacity: 0.9;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .input-group label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .auth-input {
+            padding: 12px 14px;
+            font-size: 1em;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        
+        .auth-input::placeholder {
+            color: #666;
+        }
+        
+        .auth-input:focus {
+            border-color: #ffd700;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.25);
+            background: #fff;
+        }
+        
+        .password-field {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 4px;
+        }
+        
+        .form-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .form-hint {
+            font-size: 0.9em;
+            opacity: 0.85;
+        }
+        
+        .text-link {
+            color: #ffd700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .text-link:hover {
+            text-decoration: underline;
+        }
+        
+        .auth-submit {
+            padding: 14px 18px;
+            font-size: 1em;
+            background: #ffd700;
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .auth-submit:hover {
+            background: #ffed4e;
+            transform: translateY(-2px);
+        }
+        
+        .auth-submit:disabled {
+            background: #666;
+            color: #999;
+            cursor: not-allowed;
+        }
+        
+        .form-error {
+            display: none;
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: #ffdede;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+        
+        .form-error.visible {
+            display: block;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffd700;
+            text-decoration: none;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="screen active">
+        <div class="auth-container">
+            <a href="/" class="back-link">← На главную</a>
+            
+            <h1 class="auth-title">Вход</h1>
+            <p class="auth-subtitle">Войдите в свой аккаунт</p>
+            
+            <div class="form-error" id="errorMessage"></div>
+            
+            <form class="auth-form" id="loginForm">
+                <div class="input-group">
+                    <label for="loginUsername">Имя пользователя</label>
+                    <input type="text" id="loginUsername" class="auth-input" placeholder="Ваш логин" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="loginPassword">Пароль</label>
+                    <div class="password-field">
+                        <input type="password" id="loginPassword" class="auth-input" placeholder="Ваш пароль" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">👁️</button>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="rememberMe">
+                        <span style="font-size: 0.9em;">Запомнить меня</span>
+                    </label>
+                    
+                    <a href="#" class="text-link" style="font-size: 0.9em;">Забыли пароль?</a>
+                </div>
+                
+                <button type="submit" class="auth-submit" id="loginBtn">Войти</button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <span style="opacity: 0.8;">Нет аккаунта? </span>
+                <a href="/reg" class="text-link">Зарегистрироваться</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        // Проверяем, есть ли сохраненный токен
+        if (localStorage.getItem('durak-token')) {
+            window.location.href = '/';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            const errorElement = document.getElementById('errorMessage');
+            const submitBtn = document.getElementById('loginBtn');
+            
+            // Сброс ошибок
+            errorElement.classList.remove('visible');
+            
+            // Блокируем кнопку
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Вход...';
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Сохраняем токен
+                    localStorage.setItem('durak-token', data.token);
+                    
+                    // Перенаправляем на главную
+                    window.location.href = '/';
+                } else {
+                    throw new Error(data.error || 'Ошибка входа');
+                }
+            } catch (error) {
+                let errorMessage = 'Ошибка входа';
+                
+                if (error.message === 'INVALID_CREDENTIALS') {
+                    errorMessage = 'Неверное имя пользователя или пароль';
+                }
+                
+                errorElement.textContent = errorMessage;
+                errorElement.classList.add('visible');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Войти';
+            }
+        });
+
+        // Автозаполнение при нажатии Enter
+        document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>

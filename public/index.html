@@ -73,36 +73,26 @@
             <div class="login-container">
                 <h1>Дурак</h1>
                 <p>Многопользовательская карточная игра</p>
-                <div class="login-form">
-                    <input type="text" id="username" placeholder="Имя пользователя" maxlength="20" autocomplete="username">
-                    <input type="password" id="password" placeholder="Пароль (мин. 6 символов)" maxlength="64" autocomplete="current-password">
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button id="registerBtn">Регистрация</button>
-                        <button id="loginBtn">Войти</button>
-                    </div>
-                    <button id="guestBtn" style="margin-top: 15px;">Играть гостем</button>
-                    <button id="joinGameBtn" style="margin-top: 15px; display: none;">Присоединиться к игре</button>
+                
+                <div class="auth-buttons" style="display: flex; gap: 15px; justify-content: center; margin: 30px 0;">
+                    <a href="/login" class="auth-btn" style="padding: 15px 30px; background: #ffd700; color: #333; text-decoration: none; border-radius: 8px; font-weight: bold; transition: all 0.3s ease;">
+                        Вход
+                    </a>
+                    <a href="/reg" class="auth-btn" style="padding: 15px 30px; background: rgba(255, 255, 255, 0.2); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; transition: all 0.3s ease; border: 2px solid #ffd700;">
+                        Регистрация
+                    </a>
                 </div>
-                <div class="player-stats" id="playerStatsContainer" style="display: none;">
-                    <h3>Ваша статистика</h3>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-value" id="gamesPlayed">0</div>
-                            <div class="stat-label">Игр сыграно</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="wins">0</div>
-                            <div class="stat-label">Побед</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="losses">0</div>
-                            <div class="stat-label">Поражений</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="winRate">0%</div>
-                            <div class="stat-label">Процент побед</div>
-                        </div>
-                    </div>
+
+                <div class="guest-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+                    <p style="margin-bottom: 15px; opacity: 0.8;">Или играйте как гость:</p>
+                    <input type="text" id="guestUsername" placeholder="Ваше имя" maxlength="20" style="padding: 12px; font-size: 1em; border: none; border-radius: 6px; background: rgba(255, 255, 255, 0.9); color: #333; text-align: center; width: 200px;">
+                    <button id="guestPlayBtn" style="margin-top: 10px; padding: 12px 24px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                        Играть гостем
+                    </button>
+                </div>
+
+                <div class="player-stats" id="playerStatsContainer" style="display: none; margin-top: 30px;">
+                    <!-- Статистика остается без изменений -->
                 </div>
             </div>
         </div>

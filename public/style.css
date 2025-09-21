@@ -2078,3 +2078,36 @@ body.dark-theme .auth-divider::after {
         transition: transform 0.1s ease;
     }
 }
+/* Стили для кнопок авторизации */
+.auth-btn {
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+.auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.auth-btn:active {
+    transform: translateY(0);
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 480px) {
+    .auth-buttons {
+        flex-direction: column;
+        gap: 10px !important;
+    }
+    
+    .auth-btn {
+        width: 100%;
+        max-width: 250px;
+    }
+    
+    #guestUsername {
+        width: 90% !important;
+        max-width: 250px;
+    }
+}

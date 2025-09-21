@@ -12,7 +12,28 @@ const { expressAuthMiddleware, socketIoAuthMiddleware } = require('./middleware/
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
+// Добавляем после статических файлов
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
 
+app.get('/reg', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'reg.html'));
+});
+
+// Добавляем редирект с корня на главную если авторизован
+app.get('/', (req, res) => {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    if (token) {
+        const payload = verifyToken(token);
+        if (payload) {
+            // Пользователь авторизован - отдаем главную страницу
+            return res.sendFile(path.join(__dirname, 'public', 'index.html'));
+        }
+    }
+    // Не авторизован - отдаем главную страницу (там будет форма входа)
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 // Security & basic middlewares
 app.use(helmet());
 app.use(cors());

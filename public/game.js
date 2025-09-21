@@ -40,7 +40,11 @@ class DurakClient {
         this.registerBtn = document.getElementById('registerBtn');
         this.loginBtn = document.getElementById('loginBtn');
         this.joinGameBtn = document.getElementById('joinGameBtn');
-		this.guestBtn = document.getElementById('guestBtn');
+        
+        // Guest elements
+        this.guestUsernameInput = document.getElementById('guestUsername');
+        this.guestPlayBtn = document.getElementById('guestPlayBtn');
+        this.guestSection = document.querySelector('.guest-section');
         
         // Statistics elements
         this.playerStatsContainer = document.getElementById('playerStatsContainer');

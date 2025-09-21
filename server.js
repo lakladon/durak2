@@ -226,8 +226,10 @@ class DurakGame {
             this.players[this.currentDefender].hand.push(...cardsToTake);
             this.table = [];
 
-            // ✅ Правильная смена ролей: защищавшийся становится атакующим
-            [this.currentAttacker, this.currentDefender] = [this.currentDefender, this.currentAttacker];
+            // ✅ Правильная смена ролей: атакующий остается, защищающимся становится следующий игрок
+            // В двухplayerной игре это означает, что атакующий остается прежним, а защищающийся меняется
+            this.currentDefender = this.currentAttacker;
+            this.currentAttacker = (this.currentAttacker + 1) % this.players.length;
         }
 
         // Deal cards to maintain 6 in hand (if deck has cards)

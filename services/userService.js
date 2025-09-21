@@ -48,17 +48,37 @@ function getUserByUsername(username) {
 }
 
 function createToken(user) {
-	const secret = process.env.JWT_SECRET || 'change-me-in-production';
+	const secret = getJWTSecret();
 	return jwt.sign({ sub: user.id, username: user.username }, secret, { expiresIn: '7d' });
 }
 
 function verifyToken(token) {
-	const secret = process.env.JWT_SECRET || 'change-me-in-production';
+	const secret = getJWTSecret();
 	try {
 		return jwt.verify(token, secret);
 	} catch (e) {
 		return null;
 	}
+}
+
+function getJWTSecret() {
+	const secret = process.env.JWT_SECRET;
+	if (!secret) {
+		console.error('WARNING: JWT_SECRET environment variable is not set! Using insecure default.');
+		console.error('Please set JWT_SECRET environment variable for production use.');
+		// Generate a random secret if none is provided (for development only)
+		const crypto = require('crypto');
+		const randomSecret = crypto.randomBytes(64).toString('hex');
+		console.error('Generated temporary secret. This should NOT be used in production!');
+		return randomSecret;
+	}
+	
+	// Validate secret strength
+	if (secret.length < 32) {
+		throw new Error('JWT_SECRET must be at least 32 characters long for security');
+	}
+	
+	return secret;
 }
 
 module.exports = {

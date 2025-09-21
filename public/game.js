@@ -197,6 +197,67 @@ class DurakClient {
         } catch (e) {
             console.warn('Failed to fetch profile or stats', e);
         }
+        this.updateAuthUI(); // Обновляем UI после получения данных пользователя
+    }
+
+    updateAuthUI() {
+        const isAuthenticated = !!this.authToken;
+        
+        if (isAuthenticated && this.playerName) {
+            // Пользователь авторизован - скрываем секцию гостя и показываем имя
+            if (this.guestSection) {
+                this.guestSection.style.display = 'none';
+            }
+            
+            // Создаем или обновляем секцию с именем авторизованного пользователя
+            this.showAuthenticatedPlayerSection();
+            
+        } else {
+            // Пользователь не авторизован - показываем секцию гостя
+            if (this.guestSection) {
+                this.guestSection.style.display = 'block';
+            }
+            
+            // Скрываем секцию авторизованного пользователя если она есть
+            this.hideAuthenticatedPlayerSection();
+        }
+    }
+
+    showAuthenticatedPlayerSection() {
+        // Ищем существующую секцию или создаем новую
+        let authSection = document.getElementById('authenticatedPlayerSection');
+        if (!authSection) {
+            authSection = document.createElement('div');
+            authSection.id = 'authenticatedPlayerSection';
+            authSection.className = 'authenticated-section';
+            authSection.style.cssText = 'margin-top: 20px; padding: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2); text-align: center;';
+            
+            // Вставляем после кнопок аутентификации
+            const authButtons = document.querySelector('.auth-buttons');
+            if (authButtons && authButtons.parentNode) {
+                authButtons.parentNode.insertBefore(authSection, authButtons.nextSibling);
+            }
+        }
+        
+        authSection.innerHTML = `
+            <p style="margin-bottom: 15px; opacity: 0.9; font-size: 1.1em;">Добро пожаловать, <strong>${this.playerName}</strong>!</p>
+            <button id="authenticatedPlayBtn" style="padding: 15px 30px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">
+                Начать игру
+            </button>
+        `;
+        
+        // Добавляем обработчик для кнопки
+        const playBtn = document.getElementById('authenticatedPlayBtn');
+        if (playBtn) {
+            playBtn.addEventListener('click', () => this.joinGame());
+        }
+    }
+
+    hideAuthenticatedPlayerSection() {
+        const authSection = document.getElementById('authenticatedPlayerSection');
+        if (authSection) {
+            authSection.style.display = 'none';
+        }
     }
 
     setupEventListeners() {

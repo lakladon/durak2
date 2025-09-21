@@ -122,6 +122,10 @@ class DurakClient {
     }
 
     async handleRegister() {
+        if (!this.usernameInput || !this.passwordInput) {
+            alert('Форма регистрации недоступна');
+            return;
+        }
         const username = (this.usernameInput.value || '').trim();
         const password = (this.passwordInput.value || '').trim();
         if (username.length < 2) {
@@ -150,6 +154,10 @@ class DurakClient {
     }
 
     async handleLogin() {
+        if (!this.usernameInput || !this.passwordInput) {
+            alert('Форма входа недоступна');
+            return;
+        }
         const username = (this.usernameInput.value || '').trim();
         const password = (this.passwordInput.value || '').trim();
         if (!username || !password) {

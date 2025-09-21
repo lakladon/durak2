@@ -617,8 +617,8 @@ p {
 
 .attack-card-slot,
 .defense-card-slot {
-  width: 4rem;
-  height: 6rem;
+  width: 5rem;
+  height: 7.5rem;
   position: relative;
 }
 

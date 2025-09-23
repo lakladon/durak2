@@ -12,7 +12,24 @@ const { expressAuthMiddleware, socketIoAuthMiddleware } = require('./middleware/
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+
+// Compression middleware for 3G optimization
+if (!app.get('compression_added')) {
+    app.use((req, res, next) => {
+        // Add gzip compression
+        res.setHeader('Content-Encoding', 'gzip');
+        next();
+    });
+    app.set('compression_added', true);
+}
+
+const io = socketIo(server, {
+    // Socket.IO compression for 3G optimization
+    compression: true,
+    perMessageDeflate: {
+        threshold: 1024,
+    }
+});
 // Добавляем роуты для игры
 app.get('/game', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'game.html'));

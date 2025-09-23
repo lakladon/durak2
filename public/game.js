@@ -114,8 +114,15 @@ class DurakClient {
         try {
             this.socket = io();
             this.setupSocketListeners();
+            
+            // Автоматически присоединяемся к игре после подключения
+            this.socket.on('connect', () => {
+                console.log('Connected as guest:', this.playerName);
+                this.joinGame();
+            });
+            
             if (this.joinGameBtn) this.joinGameBtn.style.display = 'block';
-            this.showNotification('Гостевой режим: подключено');
+            this.showNotification('Гостевой режим: подключение...');
         } catch (e) {
             console.error('Socket (guest) initialization failed', e);
         }

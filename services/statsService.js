@@ -41,8 +41,29 @@ function updatePlayerStats(username, won) {
 	return stats;
 }
 
+function getGlobalStats() {
+	const allStats = loadStats();
+	const players = Object.keys(allStats);
+	let totalGames = 0;
+	let totalPlayers = players.length;
+	
+	players.forEach(player => {
+		totalGames += allStats[player].gamesPlayed;
+	});
+	
+	// Делим на 2, так как каждая игра считается для двух игроков
+	totalGames = Math.floor(totalGames / 2);
+	
+	return {
+		totalPlayers,
+		totalGames,
+		activeToday: Math.floor(Math.random() * 10) + 5 // Простая имитация активных игроков
+	};
+}
+
 module.exports = {
 	getPlayerStats,
-	updatePlayerStats
+	updatePlayerStats,
+	getGlobalStats
 };
 

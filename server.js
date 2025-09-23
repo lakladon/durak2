@@ -6,7 +6,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { registerUser, authenticateUser, createToken, verifyToken } = require('./services/userService');
-const { getPlayerStats, updatePlayerStats } = require('./services/statsService');
+const { getPlayerStats, updatePlayerStats, getGlobalStats } = require('./services/statsService');
 const { expressAuthMiddleware, socketIoAuthMiddleware } = require('./middleware/auth');
 
 const app = express();

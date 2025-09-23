@@ -5,6 +5,7 @@ const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const compression = require('compression');
 const { registerUser, authenticateUser, createToken, verifyToken } = require('./services/userService');
 const { getPlayerStats, updatePlayerStats, getGlobalStats } = require('./services/statsService');
 const { expressAuthMiddleware, socketIoAuthMiddleware } = require('./middleware/auth');

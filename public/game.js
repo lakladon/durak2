@@ -6,7 +6,7 @@ class DurakClient {
         this.playerName = '';
         this.authToken = localStorage.getItem('durak-token') || '';
         this.cachedStats = null;
-		this.guestMode = false;
+        this.guestMode = false;
         
         // Mobile-specific properties
         this.isMobile = this.detectMobile();
@@ -17,6 +17,9 @@ class DurakClient {
         this.pullToRefreshThreshold = 80;
         this.isPullingToRefresh = false;
         
+        // 3G optimization - debounce game updates
+        this.updateGameStateDebounced = this.debounce(this.updateGameState.bind(this), 100);
+        
         this.initializeElements();
         this.setupEventListeners();
         this.updateAuthUI(); // Обновляем UI в зависимости от статуса аутентификации
@@ -26,6 +29,32 @@ class DurakClient {
         this.initializeSoundSystem();
         this.initializeThemeSystem();
         this.initializeMobileFeatures();
+        this.optimizeFor3G();
+    }
+
+    // 3G optimization methods
+    optimizeFor3G() {
+        // Reduce animation durations on slower connections
+        if (navigator.connection && navigator.connection.effectiveType) {
+            const connectionType = navigator.connection.effectiveType;
+            if (connectionType === '2g' || connectionType === '3g' || connectionType === 'slow-2g') {
+                document.documentElement.style.setProperty('--transition-fast', '50ms');
+                document.documentElement.style.setProperty('--transition-normal', '150ms');
+                document.documentElement.style.setProperty('--transition-slow', '250ms');
+            }
+        }
+    }
+
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     }
 
     initializeElements() {

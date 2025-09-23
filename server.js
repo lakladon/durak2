@@ -70,6 +70,11 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
     }
 });
 
+app.get('/api/stats/global', (req, res) => {
+    const globalStats = getGlobalStats();
+    res.json({ stats: globalStats });
+});
+
 // Protected routes
 app.get('/api/me', expressAuthMiddleware, (req, res) => {
     res.json({ user: req.user });

@@ -354,7 +354,7 @@ class DurakClient {
         this.socket.on('gameStarted', (gameState) => {
             this.gameState = gameState;
             this.showScreen('gameScreen');
-            this.updateGameDisplay();
+            this.updateGameDisplayDebounced();
         });
 
         this.socket.on('gameState', (gameState) => {

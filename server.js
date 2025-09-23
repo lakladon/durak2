@@ -12,7 +12,11 @@ const { expressAuthMiddleware, socketIoAuthMiddleware } = require('./middleware/
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
-// Добавляем после статических файлов
+// Добавляем роуты для игры
+app.get('/game', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'game.html'));
+});
+
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
@@ -21,18 +25,9 @@ app.get('/reg', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'reg.html'));
 });
 
-// Добавляем редирект с корня на главную если авторизован
+// Главная страница теперь показывает лендинг
 app.get('/', (req, res) => {
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    if (token) {
-        const payload = verifyToken(token);
-        if (payload) {
-            // Пользователь авторизован - отдаем главную страницу
-            return res.sendFile(path.join(__dirname, 'public', 'index.html'));
-        }
-    }
-    // Не авторизован - отдаем главную страницу (там будет форма входа)
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'landing.html'));
 });
 // Security & basic middlewares
 app.use(helmet());

@@ -18,7 +18,7 @@ class DurakClient {
         this.isPullingToRefresh = false;
         
         // 3G optimization - debounce game updates
-        this.updateGameStateDebounced = this.debounce(this.updateGameState.bind(this), 100);
+        this.updateGameDisplayDebounced = this.debounce(this.updateGameDisplay.bind(this), 100);
         
         this.initializeElements();
         this.setupEventListeners();

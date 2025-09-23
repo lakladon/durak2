@@ -37,10 +37,12 @@ app.get('/reg', (req, res) => {
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'landing.html'));
 });
-// Security & basic middlewares
+
+// Security & optimization middlewares
+app.use(compression()); // Gzip compression for 3G optimization
 app.use(helmet());
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10kb' })); // Limit JSON payload size for 3G
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));

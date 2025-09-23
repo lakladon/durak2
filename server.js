@@ -311,11 +311,12 @@ class DurakGame {
         const playerIndex = this.players.findIndex(p => p.id === playerId);
         const opponent = this.players.find(p => p.id !== playerId);
 
+        // Optimized for 3G - minimize data transfer
         return {
             gameId: this.gameId,
             players: this.players.map(p => ({
                 id: p.id,
-                name: p.name,
+                name: p.name.substring(0, 15), // Limit name length
                 handSize: p.hand.length,
                 isConnected: p.isConnected
             })),

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Дурак - популярная русская карточная игра онлайн. Играйте бесплатно с друзьями и игроками со всего мира!">
+    <meta name="keywords" content="дурак, карты, игра, онлайн, бесплатно, карточная игра">
+    <title>Дурак Онлайн - Играй бесплатно с друзьями!</title>
+    <link rel="stylesheet" href="landing.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🃏</span>
+                <span class="logo-text">Дурак</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Особенности</a>
+                <a href="#stats" class="nav-link">Статистика</a>
+                <a href="/game" class="nav-link nav-cta">Играть</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-text">🔥 Самая популярная карточная игра</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="title-gradient">Дурак Онлайн</span>
+                    <br>Играй с друзьями
+                </h1>
+                <p class="hero-description">
+                    Классическая русская карточная игра теперь доступна онлайн! 
+                    Соревнуйтесь с игроками со всего мира, развивайте стратегическое мышление 
+                    и получайте удовольствие от любимой игры.
+                </p>
+                <div class="hero-buttons">
+                    <a href="/game" class="btn btn-primary" data-testid="hero-play-button">
+                        <span class="btn-text">Начать игру</span>
+                        <span class="btn-icon">🎮</span>
+                    </a>
+                    <a href="#features" class="btn btn-secondary" data-testid="hero-learn-button">
+                        <span class="btn-text">Узнать больше</span>
+                        <span class="btn-icon">📖</span>
+                    </a>
+                </div>
+                <div class="hero-stats" id="heroStats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalPlayers">0</span>
+                        <span class="stat-label">игроков</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalGames">0</span>
+                        <span class="stat-label">игр сыграно</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="activeToday">0</span>
+                        <span class="stat-label">онлайн сегодня</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="cards-animation">
+                    <div class="card-stack">
+                        <div class="game-card card-1">
+                            <span class="card-suit red">♥️</span>
+                            <span class="card-rank">А</span>
+                        </div>
+                        <div class="game-card card-2">
+                            <span class="card-suit black">♠️</span>
+                            <span class="card-rank">K</span>
+                        </div>
+                        <div class="game-card card-3">
+                            <span class="card-suit red">♦️</span>
+                            <span class="card-rank">Q</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Почему выбирают нас?</h2>
+                <p class="section-subtitle">Лучший опыт игры в Дурак онлайн</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card" data-testid="feature-multiplayer">
+                    <div class="feature-icon">🌐</div>
+                    <h3 class="feature-title">Мультиплеер в реальном времени</h3>
+                    <p class="feature-description">
+                        Играйте с реальными людьми со всего мира. Быстрый поиск противников 
+                        и мгновенное подключение к игре.
+                    </p>
+                </div>
+                <div class="feature-card" data-testid="feature-free">
+                    <div class="feature-icon">🆓</div>
+                    <h3 class="feature-title">Абсолютно бесплатно</h3>
+                    <p class="feature-description">
+                        Никаких скрытых платежей или премиум-функций. 
+                        Полный доступ ко всем возможностям игры.
+                    </p>
+                </div>
+                <div class="feature-card" data-testid="feature-mobile">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">Мобильная версия</h3>
+                    <p class="feature-description">
+                        Играйте на любом устройстве - компьютере, планшете или смартфоне. 
+                        Адаптивный дизайн для лучшего опыта.
+                    </p>
+                </div>
+                <div class="feature-card" data-testid="feature-chat">
+                    <div class="feature-icon">💬</div>
+                    <h3 class="feature-title">Встроенный чат</h3>
+                    <p class="feature-description">
+                        Общайтесь с противниками во время игры. 
+                        Добавьте эмоций в каждую партию!
+                    </p>
+                </div>
+                <div class="feature-card" data-testid="feature-stats">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Статистика игр</h3>
+                    <p class="feature-description">
+                        Отслеживайте свои победы, поражения и общий прогресс. 
+                        Становитесь лучше с каждой игрой!
+                    </p>
+                </div>
+                <div class="feature-card" data-testid="feature-rules">
+                    <div class="feature-icon">📋</div>
+                    <h3 class="feature-title">Классические правила</h3>
+                    <p class="feature-description">
+                        Играем по традиционным правилам русского Дурака. 
+                        Никаких изменений - только настоящая игра.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section" id="stats">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Игровая статистика</h2>
+                <p class="section-subtitle">Присоединяйтесь к тысячам игроков</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card" data-testid="total-players-stat">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <span class="stat-big-number" id="statTotalPlayers">0</span>
+                        <span class="stat-desc">Зарегистрированных игроков</span>
+                    </div>
+                </div>
+                <div class="stat-card" data-testid="total-games-stat">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-content">
+                        <span class="stat-big-number" id="statTotalGames">0</span>
+                        <span class="stat-desc">Игр проведено</span>
+                    </div>
+                </div>
+                <div class="stat-card" data-testid="active-players-stat">
+                    <div class="stat-icon">🟢</div>
+                    <div class="stat-content">
+                        <span class="stat-big-number" id="statActiveToday">0</span>
+                        <span class="stat-desc">Активных игроков сегодня</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="section-container">
+            <div class="cta-content">
+                <h2 class="cta-title">Готовы начать играть?</h2>
+                <p class="cta-description">
+                    Присоединяйтесь к сообществу любителей карточных игр 
+                    и докажите, что вы лучший игрок в Дурак!
+                </p>
+                <div class="cta-buttons">
+                    <a href="/game" class="btn btn-primary btn-large" data-testid="cta-play-button">
+                        <span class="btn-text">Играть сейчас</span>
+                        <span class="btn-icon">🚀</span>
+                    </a>
+                    <a href="/reg" class="btn btn-secondary btn-large" data-testid="cta-register-button">
+                        <span class="btn-text">Создать аккаунт</span>
+                        <span class="btn-icon">📝</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="logo-icon">🃏</span>
+                    <span class="logo-text">Дурак Онлайн</span>
+                </div>
+                <div class="footer-links">
+                    <a href="/game" class="footer-link">Игра</a>
+                    <a href="/login" class="footer-link">Вход</a>
+                    <a href="/reg" class="footer-link">Регистрация</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Дурак Онлайн. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="landing.js"></script>
+</body>
+</html>

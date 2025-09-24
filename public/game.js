@@ -246,58 +246,178 @@ class DurakClient {
     }
 
     updateAuthUI() {
-        const isAuthenticated = !!this.authToken;
+    const isAuthenticated = !!this.authToken;
+    
+    console.log('updateAuthUI called:', { 
+        isAuthenticated, 
+        playerName: this.playerName,
+        hasSocket: !!this.socket 
+    });
+
+    // Убираем все существующие секции
+    this.hideAllAuthSections();
+
+    if (isAuthenticated && this.playerName) {
+        // Авторизованный пользователь
+        this.showAuthenticatedSection();
+    } else {
+        // Гость
+        this.showGuestSection();
+    }
+}
+
+hideAllAuthSections() {
+    // Скрываем секцию гостя
+    if (this.guestSection) {
+        this.guestSection.style.display = 'none';
+    }
+    
+    // Скрываем секцию авторизованного пользователя
+    const authSection = document.getElementById('authenticatedPlayerSection');
+    if (authSection) {
+        authSection.style.display = 'none';
+    }
+    
+    // Скрываем стандартную кнопку присоединения
+    if (this.joinGameBtn) {
+        this.joinGameBtn.style.display = 'none';
+    }
+}
+
+showAuthenticatedSection() {
+    console.log('Showing authenticated section for:', this.playerName);
+    
+    let authSection = document.getElementById('authenticatedPlayerSection');
+    if (!authSection) {
+        authSection = document.createElement('div');
+        authSection.id = 'authenticatedPlayerSection';
+        authSection.className = 'authenticated-section';
+        authSection.style.cssText = 'margin-top: 20px; padding: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2); text-align: center;';
         
-        if (isAuthenticated && this.playerName) {
-            // Пользователь авторизован - скрываем секцию гостя и показываем имя
-            if (this.guestSection) {
-                this.guestSection.style.display = 'none';
-            }
-            
-            // Создаем или обновляем секцию с именем авторизованного пользователя
-            this.showAuthenticatedPlayerSection();
-            
-        } else {
-            // Пользователь не авторизован - показываем секцию гостя
-            if (this.guestSection) {
-                this.guestSection.style.display = 'block';
-            }
-            
-            // Скрываем секцию авторизованного пользователя если она есть
-            this.hideAuthenticatedPlayerSection();
+        const guestSection = document.querySelector('.guest-section');
+        if (guestSection && guestSection.parentNode) {
+            guestSection.parentNode.insertBefore(authSection, guestSection);
         }
     }
+    
+    authSection.style.display = 'block';
+    authSection.innerHTML = `
+        <p style="margin-bottom: 15px; opacity: 0.9; font-size: 1.1em;">Добро пожаловать, <strong>${this.playerName}</strong>!</p>
+        <button id="authenticatedPlayBtn" style="padding: 15px 30px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em; margin: 5px;">
+            Начать игру
+        </button>
+        <button id="logoutBtn" style="padding: 15px 30px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em; margin: 5px;">
+            Выйти
+        </button>
+    `;
+    
+    // Обработчики для кнопок
+    const playBtn = document.getElementById('authenticatedPlayBtn');
+    if (playBtn) {
+        playBtn.addEventListener('click', () => this.joinGame());
+    }
+    
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => this.logout());
+    }
+}
 
-    showAuthenticatedPlayerSection() {
-        // Ищем существующую секцию или создаем новую
-        let authSection = document.getElementById('authenticatedPlayerSection');
-        if (!authSection) {
-            authSection = document.createElement('div');
-            authSection.id = 'authenticatedPlayerSection';
-            authSection.className = 'authenticated-section';
-            authSection.style.cssText = 'margin-top: 20px; padding: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2); text-align: center;';
-            
-            // Вставляем после кнопок аутентификации
-            const authButtons = document.querySelector('.auth-buttons');
-            if (authButtons && authButtons.parentNode) {
-                authButtons.parentNode.insertBefore(authSection, authButtons.nextSibling);
-            }
-        }
+showGuestSection() {
+    console.log('Showing guest section');
+    
+    if (this.guestSection) {
+        this.guestSection.style.display = 'block';
         
-        authSection.innerHTML = `
-            <p style="margin-bottom: 15px; opacity: 0.9; font-size: 1.1em;">Добро пожаловать, <strong>${this.playerName}</strong>!</p>
-            <button id="authenticatedPlayBtn" style="padding: 15px 30px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">
-                Начать игру
-            </button>
-        `;
-        
-        // Добавляем обработчик для кнопки
-        const playBtn = document.getElementById('authenticatedPlayBtn');
-        if (playBtn) {
-            playBtn.addEventListener('click', () => this.joinGame());
+        // Убедимся, что кнопка "Играть гостем" видна
+        if (this.guestPlayBtn) {
+            this.guestPlayBtn.style.display = 'inline-block';
         }
     }
+}
 
+logout() {
+    localStorage.removeItem('durak-token');
+    this.authToken = '';
+    this.playerName = '';
+    this.socket = null;
+    this.updateAuthUI();
+    location.reload();
+}
+
+// Также обновим метод afterAuthSetup
+afterAuthSetup() {
+    try {
+        this.socket = io({
+            auth: { token: this.authToken }
+        });
+        
+        this.socket.on('connect', () => {
+            console.log('Socket connected as authenticated user');
+            this.updateAuthUI();
+        });
+        
+        this.setupSocketListeners();
+        this.fetchMeAndStats();
+        
+    } catch (e) {
+        console.error('Socket initialization failed', e);
+    }
+}
+
+// И метод startAsGuest
+startAsGuest() {
+    this.guestMode = true;
+    const inputName = (this.guestUsernameInput?.value || '').trim();
+    this.playerName = inputName || `Гость-${Math.floor(1000 + Math.random() * 9000)}`;
+    
+    console.log('Starting as guest:', this.playerName);
+    
+    try {
+        this.socket = io();
+        
+        this.socket.on('connect', () => {
+            console.log('Socket connected as guest');
+            this.updateAuthUI();
+        });
+        
+        this.setupSocketListeners();
+        this.showNotification('Гостевой режим: подключение...');
+        
+    } catch (e) {
+        console.error('Socket (guest) initialization failed', e);
+        this.showNotification('Ошибка подключения');
+    }
+}
+   showAuthenticatedPlayerSection() {
+    let authSection = document.getElementById('authenticatedPlayerSection');
+    if (!authSection) {
+        authSection = document.createElement('div');
+        authSection.id = 'authenticatedPlayerSection';
+        authSection.className = 'authenticated-section';
+        authSection.style.cssText = 'margin-top: 20px; padding: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2); text-align: center;';
+        
+        const authButtons = document.querySelector('.auth-buttons');
+        if (authButtons && authButtons.parentNode) {
+            authButtons.parentNode.insertBefore(authSection, authButtons.nextSibling);
+        }
+    }
+    
+    // Всегда показываем секцию
+    authSection.style.display = 'block';
+    
+    authSection.innerHTML = `
+        <p style="margin-bottom: 15px; opacity: 0.9; font-size: 1.1em;">Добро пожаловать, <strong>${this.playerName}</strong>!</p>
+        <button id="authenticatedPlayBtn" style="padding: 15px 30px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">
+            Начать игру
+        </button>
+    `;
+    
+    const playBtn = document.getElementById('authenticatedPlayBtn');
+    if (playBtn) {
+        playBtn.addEventListener('click', () => this.joinGame());
+    }
+}
     hideAuthenticatedPlayerSection() {
         const authSection = document.getElementById('authenticatedPlayerSection');
         if (authSection) {

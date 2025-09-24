@@ -22,7 +22,7 @@ const io = socketIo(server, {
 });
 // Добавляем роуты для игры
 app.get('/game', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'game.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('/login', (req, res) => {

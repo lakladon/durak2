@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Дурак">
+    <meta name="theme-color" content="#0f4c3a">
+    <meta name="msapplication-navbutton-color" content="#0f4c3a">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Дурак - Многопользовательская игра</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.svg">
+</head>
+<body>
+    <div id="app">
+        <!-- Mobile Navigation -->
+        <div id="mobileNav" class="mobile-nav">
+            <div class="mobile-nav-title">Дурак</div>
+            <div class="mobile-nav-controls">
+                <button id="mobileMenuBtn" class="mobile-nav-btn" title="Меню">☰</button>
+                <button id="mobileSettingsBtn" class="mobile-nav-btn" title="Настройки">⚙️</button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobileMenuOverlay" class="mobile-menu-overlay">
+            <div class="mobile-menu">
+                <div class="mobile-menu-item" id="mobileStatsBtn">
+                    <div class="mobile-menu-icon">📊</div>
+                    <div class="mobile-menu-text">Статистика</div>
+                </div>
+                <div class="mobile-menu-item" id="mobileRulesBtn">
+                    <div class="mobile-menu-icon">📖</div>
+                    <div class="mobile-menu-text">Правила</div>
+                </div>
+                <div class="mobile-menu-item" id="mobileSoundBtn">
+                    <div class="mobile-menu-icon">🔊</div>
+                    <div class="mobile-menu-text">Звуки</div>
+                </div>
+                <div class="mobile-menu-item" id="mobileThemeBtn">
+                    <div class="mobile-menu-icon">🌙</div>
+                    <div class="mobile-menu-text">Тема</div>
+                </div>
+                <div class="mobile-menu-item" id="mobileAboutBtn">
+                    <div class="mobile-menu-icon">ℹ️</div>
+                    <div class="mobile-menu-text">О игре</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pull to Refresh -->
+        <div id="pullToRefresh" class="pull-to-refresh">
+            <div class="pull-to-refresh-text">Обновить игру</div>
+        </div>
+
+        <!-- Bottom Sheet for Mobile -->
+        <div id="bottomSheet" class="bottom-sheet">
+            <div class="bottom-sheet-header">
+                <div class="bottom-sheet-title" id="bottomSheetTitle">Настройки</div>
+                <button id="bottomSheetClose" class="bottom-sheet-close">✕</button>
+            </div>
+            <div class="bottom-sheet-content" id="bottomSheetContent">
+                <!-- Content will be dynamically loaded here -->
+            </div>
+        </div>
+
+        <!-- Login Screen -->
+        <div id="loginScreen" class="screen active">
+            <div class="login-container">
+                <h1>Дурак</h1>
+                <p>Многопользовательская карточная игра</p>
+                
+                <div class="auth-buttons" style="display: flex; gap: 15px; justify-content: center; margin: 30px 0;">
+                    <a href="/login" class="auth-btn" style="padding: 15px 30px; background: #ffd700; color: #333; text-decoration: none; border-radius: 8px; font-weight: bold; transition: all 0.3s ease;">
+                        Вход
+                    </a>
+                    <a href="/reg" class="auth-btn" style="padding: 15px 30px; background: rgba(255, 255, 255, 0.2); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; transition: all 0.3s ease; border: 2px solid #ffd700;">
+                        Регистрация
+                    </a>
+                </div>
+
+                <div class="guest-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+                    <p style="margin-bottom: 15px; opacity: 0.8;">Или играйте как гость:</p>
+                    <input type="text" id="guestUsername" placeholder="Ваше имя" maxlength="20" style="padding: 12px; font-size: 1em; border: none; border-radius: 6px; background: rgba(255, 255, 255, 0.9); color: #333; text-align: center; width: 200px;">
+                    <button id="guestPlayBtn" style="margin-top: 10px; padding: 12px 24px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                        Играть гостем
+                    </button>
+                </div>
+
+                <div class="player-stats" id="playerStatsContainer" style="display: none; margin-top: 30px;">
+                    <!-- Статистика остается без изменений -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Waiting Screen -->
+        <div id="waitingScreen" class="screen">
+            <div class="waiting-container">
+                <h2>Ожидание игрока...</h2>
+                <div class="spinner"></div>
+                <p>Поиск противника для игры</p>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen">
+            <!-- Game Header -->
+            <div class="game-header">
+                <div class="player-info opponent-info">
+                    <div class="player-name" id="opponentName">Противник</div>
+                    <div class="hand-count" id="opponentHandCount">6 карт</div>
+                </div>
+                
+                <div class="game-info">
+                    <div class="trump-info">
+                        <span>Козырь:</span>
+                        <div class="trump-card" id="trumpCard"></div>
+                    </div>
+                    <div class="deck-info">
+                        <div class="deck-count" id="deckCount">30</div>
+                        <div class="deck-icon">🂠</div>
+                    </div>
+                </div>
+
+                <div class="player-info current-player-info">
+                    <div class="player-name" id="currentPlayerName">Вы</div>
+                    <div class="hand-count" id="currentPlayerHandCount">6 карт</div>
+                </div>
+            </div>
+
+            <!-- Game Table -->
+            <div class="game-table">
+                <div class="table-area" id="tableArea">
+                    <!-- Attack and defense cards will be placed here -->
+                </div>
+            </div>
+
+            <div class="game-actions">
+                <button id="endTurnBtn" class="action-btn" disabled>Завершить ход</button>
+                <button id="takeCardsBtn" class="action-btn" disabled>Взять карты</button>
+            </div>
+
+            <!-- Player Hand -->
+            <div class="player-hand">
+                <div class="hand-title">Ваши карты</div>
+                <div class="hand-cards" id="playerHand">
+                    <!-- Player cards will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Game Status -->
+            <div class="game-status">
+                <div id="gameStatusText">Ожидание начала игры...</div>
+                <div id="turnIndicator"></div>
+            </div>
+
+            <!-- Chat System -->
+            <div class="chat-container">
+                <div class="chat-header">
+                    <span>Чат</span>
+                    <div class="chat-controls">
+                        <button id="toggleTheme" class="theme-toggle" title="Переключить тему">🌙</button>
+                        <button id="toggleSound" class="sound-toggle" title="Переключить звуки">🔊</button>
+                        <button id="toggleChat" class="chat-toggle">−</button>
+                    </div>
+                </div>
+                <div class="chat-content" id="chatContent">
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Chat messages will appear here -->
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chatInput" placeholder="Введите сообщение..." maxlength="100">
+                        <button id="sendChatBtn">Отправить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="screen">
+            <div class="game-over-container">
+                <h2 id="gameResult">Игра окончена</h2>
+                <p id="gameResultText"></p>
+                <div class="game-over-stats" id="gameOverStats">
+                    <div class="stats-comparison">
+                        <div class="player-final-stats">
+                            <h4>Ваша статистика</h4>
+                            <div class="final-stats-grid">
+                                <div class="final-stat-item">
+                                    <span class="final-stat-value" id="finalGamesPlayed">0</span>
+                                    <span class="final-stat-label">игр</span>
+                                </div>
+                                <div class="final-stat-item">
+                                    <span class="final-stat-value" id="finalWins">0</span>
+                                    <span class="final-stat-label">побед</span>
+                                </div>
+                                <div class="final-stat-item">
+                                    <span class="final-stat-value" id="finalWinRate">0%</span>
+                                    <span class="final-stat-label">побед</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="playAgainBtn">Играть снова</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Templates -->
+    <template id="cardTemplate">
+        <div class="card" data-suit="" data-rank="">
+            <div class="card-content">
+                <div class="card-rank"></div>
+                <div class="card-suit"></div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tableCardPairTemplate">
+        <div class="card-pair">
+            <div class="attack-card-slot">
+                <div class="card attack-card" data-suit="" data-rank="">
+                    <div class="card-content">
+                        <div class="card-rank"></div>
+                        <div class="card-suit"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="defense-card-slot">
+                <!-- Defense card will be placed here if defended -->
+            </div>
+        </div>
+    </template>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="game.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

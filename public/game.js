@@ -257,8 +257,8 @@ class DurakClient {
     // Убираем все существующие секции
     this.hideAllAuthSections();
 
-    if (isAuthenticated && this.playerName) {
-        // Авторизованный пользователь
+    if (isAuthenticated) {
+        // Авторизованный пользователь (не требуем наличие playerName сразу)
         this.showAuthenticatedSection();
     } else {
         // Гость

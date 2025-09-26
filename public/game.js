@@ -254,15 +254,40 @@ class DurakClient {
         hasSocket: !!this.socket 
     });
 
-    // Убираем все существующие секции
-    this.hideAllAuthSections();
+    // Получаем элементы
+    const guestSection = document.querySelector('.guest-section');
+    const authSection = document.getElementById('authenticatedUserSection');
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    const playButton = document.getElementById('playButton');
+    const logoutButton = document.getElementById('logoutButton');
 
     if (isAuthenticated) {
-        // Авторизованный пользователь (не требуем наличие playerName сразу)
-        this.showAuthenticatedSection();
+        // Показываем секцию авторизованного пользователя
+        if (guestSection) guestSection.style.display = 'none';
+        if (authSection) {
+            authSection.style.display = 'block';
+            
+            // Обновляем приветствие
+            const displayName = this.playerName || 'Загрузка...';
+            if (welcomeMessage) {
+                welcomeMessage.innerHTML = `Добро пожаловать, <strong>${displayName}</strong>!`;
+            }
+            
+            // Добавляем обработчики событий
+            if (playButton && !playButton.hasAttribute('data-handler-added')) {
+                playButton.addEventListener('click', () => this.joinGame());
+                playButton.setAttribute('data-handler-added', 'true');
+            }
+            
+            if (logoutButton && !logoutButton.hasAttribute('data-handler-added')) {
+                logoutButton.addEventListener('click', () => this.logout());
+                logoutButton.setAttribute('data-handler-added', 'true');
+            }
+        }
     } else {
-        // Гость
-        this.showGuestSection();
+        // Показываем гостевую секцию
+        if (guestSection) guestSection.style.display = 'block';
+        if (authSection) authSection.style.display = 'none';
     }
 }
 

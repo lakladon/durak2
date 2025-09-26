@@ -285,7 +285,8 @@ hideAllAuthSections() {
 }
 
 showAuthenticatedSection() {
-    console.log('Showing authenticated section for:', this.playerName);
+    const displayName = this.playerName || 'Загрузка...';
+    console.log('Showing authenticated section for:', displayName);
     
     let authSection = document.getElementById('authenticatedPlayerSection');
     if (!authSection) {
@@ -302,9 +303,9 @@ showAuthenticatedSection() {
     
     authSection.style.display = 'block';
     authSection.innerHTML = `
-        <p style="margin-bottom: 15px; opacity: 0.9; font-size: 1.1em;">Добро пожаловать, <strong>${this.playerName}</strong>!</p>
+        <p style="margin-bottom: 15px; opacity: 0.9; font-size: 1.1em;">Добро пожаловать, <strong>${displayName}</strong>!</p>
         <button id="authenticatedPlayBtn" style="padding: 15px 30px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em; margin: 5px;">
-            Начать игру
+            Играть
         </button>
         <button id="logoutBtn" style="padding: 15px 30px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em; margin: 5px;">
             Выйти

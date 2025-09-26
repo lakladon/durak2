@@ -252,6 +252,53 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="game.js"></script>
     
+    <!-- Simple Play Button Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Проверяем авторизацию и добавляем кнопку "Играть"
+            const token = localStorage.getItem('durak-token');
+            if (token) {
+                // Скрываем гостевую секцию
+                const guestSection = document.querySelector('.guest-section');
+                if (guestSection) {
+                    guestSection.style.display = 'none';
+                }
+                
+                // Показываем секцию авторизованного пользователя
+                const authSection = document.getElementById('authenticatedUserSection');
+                if (authSection) {
+                    authSection.style.display = 'block';
+                    
+                    // Устанавливаем приветствие
+                    const welcomeMessage = document.getElementById('welcomeMessage');
+                    if (welcomeMessage) {
+                        welcomeMessage.innerHTML = 'Добро пожаловать, <strong>игрок</strong>!';
+                    }
+                    
+                    // Добавляем обработчики кнопок
+                    const playButton = document.getElementById('playButton');
+                    const logoutButton = document.getElementById('logoutButton');
+                    
+                    if (playButton) {
+                        playButton.addEventListener('click', () => {
+                            // Присоединяемся к игре как авторизованный пользователь
+                            if (window.durakClient) {
+                                window.durakClient.joinGame();
+                            }
+                        });
+                    }
+                    
+                    if (logoutButton) {
+                        logoutButton.addEventListener('click', () => {
+                            localStorage.removeItem('durak-token');
+                            location.reload();
+                        });
+                    }
+                }
+            }
+        });
+    </script>
+    
     <!-- Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
